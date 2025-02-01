@@ -50,9 +50,7 @@ class HospitalDeliveryRobot:
             self.deliver_medicine(room_number)
             self.move_to("Corridor")
 
-# Initialize the environment and agent
 environment = Environment()
 robot = HospitalDeliveryRobot(environment)
 
-# Perform the delivery cycle
 robot.perform_delivery_cycle()
