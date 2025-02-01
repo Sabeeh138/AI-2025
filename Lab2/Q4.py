@@ -1,39 +1,57 @@
 import random
 
-class BackupTask:
-    def __init__(self, task_id, status):
-        self.task_id = task_id
-        self.status = status
+class SystemComponent:
+    def __init__(self, name):
+        self.name = name
+        self.status = random.choice(["Safe", "Low Risk Vulnerable", "High Risk Vulnerable"])
 
-    def retry(self):
-        self.status = "Completed" if random.choice([True, False]) else "Failed"
+    def patch(self):
+        if self.status == "Low Risk Vulnerable":
+            self.status = "Safe"
 
     def __str__(self):
-        return f"Task {self.task_id}: {self.status}"
+        return f"Component {self.name}: {self.status}"
 
-class BackupManagementAgent:
-    def __init__(self, tasks):
-        self.tasks = tasks
+class UtilityBasedSecurityAgent:
+    def __init__(self, components):
+        self.components = components
 
-    def scan_and_retry_failed_backups(self):
-        for task in self.tasks:
-            if task.status == "Failed":
-                print(f"Retrying {task.task_id}...")
-                task.retry()
+    def scan_system(self):
+        print("System Scan Results:")
+        for component in self.components:
+            if component.status == "Safe":
+                print(f"{component.name} is Safe.")
+            else:
+                print(f"Warning: {component.name} is {component.status}.")
 
-    def display_task_statuses(self):
-        for task in self.tasks:
-            print(task)
+    def patch_vulnerabilities(self):
+        print("\nPatching Vulnerabilities:")
+        for component in self.components:
+            if component.status == "Low Risk Vulnerable":
+                print(f"Patching Low Risk Vulnerability in {component.name}...")
+                component.patch()
+            elif component.status == "High Risk Vulnerable":
+                print(f"{component.name} has a High Risk Vulnerability. Premium service required to patch.")
 
-tasks = [BackupTask(task_id=i, status=random.choice(["Completed", "Failed"])) for i in range(1, 11)]
+    def display_system_status(self, title):
+        print(f"\n{title}")
+        for component in self.components:
+            print(component)
 
-agent = BackupManagementAgent(tasks)
+# Initialize system environment with components A through I
+components = [SystemComponent(name) for name in "ABCDEFGHI"]
 
-print("Initial Task Statuses:")
-agent.display_task_statuses()
+# Instantiate the Utility-Based Security Agent
+agent = UtilityBasedSecurityAgent(components)
 
-print("\nRetrying Failed Backups:")
-agent.scan_and_retry_failed_backups()
+# Initial System Check
+agent.display_system_status("Initial System State")
 
-print("\nUpdated Task Statuses:")
-agent.display_task_statuses()
+# System Scan
+agent.scan_system()
+
+# Patching Vulnerabilities
+agent.patch_vulnerabilities()
+
+# Final System Check
+agent.display_system_status("Final System State")
