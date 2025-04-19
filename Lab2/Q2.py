@@ -1,52 +1,46 @@
 import random
 
-class LoadBalancerAgent:
-    def __init__(self, servers):
-        self.servers = servers
+class Server:
+    def __init__(self, name):
+        self.name = name
+        self.load_state = random.choice(["Underloaded", "Balanced", "Overloaded"])
 
-    def scan_and_balance(self):
-        overloaded_servers = [server for server, load in self.servers.items() if load == "Overloaded"]
-        underloaded_servers = [server for server, load in self.servers.items() if load == "Underloaded"]
-        
-        if overloaded_servers and underloaded_servers:
-            print("\nBalancing the load...")
-            for i in range(min(len(overloaded_servers), len(underloaded_servers))):
-                overloaded_server = overloaded_servers[i]
-                underloaded_server = underloaded_servers[i]
-                self.servers[overloaded_server] = "Balanced"
-                self.servers[underloaded_server] = "Balanced"
-                print(f"Moved tasks from {overloaded_server} to {underloaded_server}")
-        else:
-            print("\nNo balancing needed, either no overloaded or no underloaded servers.")
+    def __str__(self):
+        return f"Server {self.name}: {self.load_state}"
 
-    def display_system_state(self):
-        print("\nUpdated System Load Status:")
-        for server, load in self.servers.items():
-            print(f"{server}: {load}")
 
-def initialize_system():
-    servers = {
-        'Server 1': random.choice(['Underloaded', 'Balanced', 'Overloaded']),
-        'Server 2': random.choice(['Underloaded', 'Balanced', 'Overloaded']),
-        'Server 3': random.choice(['Underloaded', 'Balanced', 'Overloaded']),
-        'Server 4': random.choice(['Underloaded', 'Balanced', 'Overloaded']),
-        'Server 5': random.choice(['Underloaded', 'Balanced', 'Overloaded'])
-    }
-    return servers
+class LoadBalancer:
+    def __init__(self):
+        # initialize 5 servers with random load states
+        self.servers = [Server(f"S{i + 1}") for i in range(5)]
 
-def main():
-    print("Initializing the system...\n")
-    servers = initialize_system()
-    
-    print("Initial System Load Status:")
-    for server, load in servers.items():
-        print(f"{server}: {load}")
-    
-    agent = LoadBalancerAgent(servers)
+    def display_system_state(self, message):
+        # display the current load state of all servers
+        print(f"\n{message}:")
+        for server in self.servers:
+            print(server)
 
-    agent.scan_and_balance()
+    def balance_load(self):
+        # redistribute load from overloaded to underloaded servers
+        overloaded_servers = [s for s in self.servers if s.load_state == "Overloaded"]
+        underloaded_servers = [s for s in self.servers if s.load_state == "Underloaded"]
 
-    agent.display_system_state()
+        print("\nBalancing Load:")
+        while overloaded_servers and underloaded_servers:
+            overloaded = overloaded_servers.pop(0)  # Take first overloaded server
+            underloaded = underloaded_servers.pop(0)  # Take first underloaded server
 
-if __name__ == "__main__":
-    main()
+            # Balance both servers
+            overloaded.load_state = "Balanced"
+            underloaded.load_state = "Balanced"
+
+            print(f"Moved tasks from {overloaded.name} to {underloaded.name}. Both are now Balanced.")
+
+    def run(self):
+        self.display_system_state("Initial Server Load")
+        self.balance_load()
+        self.display_system_state("Final Server Load")
+
+
+agent = LoadBalancer()
+agent.run()
